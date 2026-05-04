@@ -1,0 +1,179 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* =============================================
+   PULSEWATCH DESIGN SYSTEM
+   Grafana/Datadog-inspired dark-first UI
+   ============================================= */
+
+@layer base {
+  :root {
+    /* Light mode tokens */
+    --background:       220 20% 97%;
+    --foreground:       220 15% 10%;
+    --card:             0 0% 100%;
+    --card-foreground:  220 15% 10%;
+    --popover:          0 0% 100%;
+    --popover-foreground: 220 15% 10%;
+    --primary:          199 89% 48%;
+    --primary-foreground: 0 0% 100%;
+    --secondary:        220 15% 93%;
+    --secondary-foreground: 220 15% 20%;
+    --muted:            220 15% 93%;
+    --muted-foreground: 220 10% 50%;
+    --accent:           199 89% 48%;
+    --accent-foreground: 0 0% 100%;
+    --destructive:      0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --border:           220 15% 88%;
+    --input:            220 15% 88%;
+    --ring:             199 89% 48%;
+    --radius:           0.5rem;
+
+    /* PulseWatch custom tokens */
+    --sidebar-bg:       220 20% 97%;
+    --sidebar-border:   220 15% 88%;
+    --chart-grid:       220 15% 88%;
+    --status-healthy:   142 71% 45%;
+    --status-warning:   38 92% 50%;
+    --status-critical:  0 84% 60%;
+  }
+
+  .dark {
+    /* Dark mode tokens — Grafana-inspired */
+    --background:       222 27% 9%;
+    --foreground:       210 20% 92%;
+    --card:             222 25% 12%;
+    --card-foreground:  210 20% 92%;
+    --popover:          222 25% 12%;
+    --popover-foreground: 210 20% 92%;
+    --primary:          199 89% 48%;
+    --primary-foreground: 222 27% 9%;
+    --secondary:        222 22% 17%;
+    --secondary-foreground: 210 20% 85%;
+    --muted:            222 22% 17%;
+    --muted-foreground: 215 15% 55%;
+    --accent:           199 89% 48%;
+    --accent-foreground: 222 27% 9%;
+    --destructive:      0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+    --border:           222 22% 18%;
+    --input:            222 22% 18%;
+    --ring:             199 89% 48%;
+
+    /* PulseWatch dark custom tokens */
+    --sidebar-bg:       222 27% 7%;
+    --sidebar-border:   222 22% 15%;
+    --chart-grid:       222 22% 18%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+
+  /* Scrollbar styling — Grafana-like */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-border rounded-full;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-muted-foreground/50;
+  }
+
+  /* Selection */
+  ::selection {
+    @apply bg-primary/20 text-foreground;
+  }
+}
+
+@layer utilities {
+  /* Glass morphism utility */
+  .glass {
+    @apply bg-card/60 backdrop-blur-md border border-border/50;
+  }
+
+  .glass-strong {
+    @apply bg-card/80 backdrop-blur-xl border border-border/60;
+  }
+
+  /* Glow effects */
+  .glow-primary {
+    box-shadow: 0 0 20px hsl(var(--primary) / 0.3);
+  }
+
+  .glow-status-healthy {
+    box-shadow: 0 0 12px hsl(var(--status-healthy) / 0.4);
+  }
+
+  .glow-status-critical {
+    box-shadow: 0 0 12px hsl(var(--status-critical) / 0.4);
+  }
+
+  /* Gradient text */
+  .gradient-text {
+    @apply bg-gradient-to-r from-pulse-400 to-pulse-600 bg-clip-text text-transparent;
+  }
+
+  /* Chart container */
+  .chart-container {
+    @apply w-full rounded-lg overflow-hidden;
+  }
+
+  /* Metric card */
+  .metric-card {
+    @apply glass rounded-xl p-4 transition-all duration-300 hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5;
+  }
+
+  /* Status dot */
+  .status-dot {
+    @apply w-2 h-2 rounded-full inline-block;
+  }
+
+  /* Shimmer loading effect */
+  .shimmer {
+    background: linear-gradient(
+      90deg,
+      hsl(var(--muted)) 25%,
+      hsl(var(--secondary)) 50%,
+      hsl(var(--muted)) 75%
+    );
+    background-size: 200% 100%;
+    @apply animate-shimmer;
+  }
+
+  /* Grid background pattern */
+  .bg-grid {
+    background-image: linear-gradient(
+        hsl(var(--border) / 0.4) 1px,
+        transparent 1px
+      ),
+      linear-gradient(90deg, hsl(var(--border) / 0.4) 1px, transparent 1px);
+    background-size: 40px 40px;
+  }
+
+  /* Hide scrollbar but keep functionality */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+}
