@@ -4,14 +4,21 @@
   "description": "PulseWatch backend API server",
   "main": "dist/server.js",
   "scripts": {
-    "dev": "ts-node-dev --respawn --transpile-only --exit-child src/server.ts",
+    "dev": "ts-node-dev --respawn --transpile-only --exit-child -r tsconfig-paths/register src/server.ts",
     "build": "tsc",
     "start": "node dist/server.js",
     "lint": "eslint src/**/*.ts",
     "type-check": "tsc --noEmit",
     "clean": "rm -rf dist"
   },
-  "keywords": ["pulsewatch", "monitoring", "api"],
+  "keywords": [
+    "pulsewatch",
+    "monitoring",
+    "api"
+  ],
   "author": "",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "tsconfig-paths": "^4.2.0"
+  }
 }
