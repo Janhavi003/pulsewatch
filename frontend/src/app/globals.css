@@ -4,6 +4,8 @@
 
 @layer base {
   :root {
+    --font-inter:   var(--font-inter, "Inter", system-ui, sans-serif);
+    --font-mono:    var(--font-mono, "JetBrains Mono", monospace);
     --background: 220 20% 97%;
     --foreground: 220 15% 10%;
     --card: 0 0% 100%;
@@ -53,8 +55,10 @@
     border-color: hsl(var(--border));
   }
 
-  body {
-    background-color: hsl(var(--background));
-    color: hsl(var(--foreground));
-  }
+ body {
+  background-color: hsl(var(--background));
+  color: hsl(var(--foreground));
+  font-family: var(--font-inter), system-ui, sans-serif;
+  font-feature-settings: "rlig" 1, "calt" 1;
+}
 }
