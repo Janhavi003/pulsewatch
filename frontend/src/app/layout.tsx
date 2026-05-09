@@ -1,98 +1,91 @@
-import type { Metadata, Viewport } from "next";
-import { Inter } from "next/font/google";
-import { JetBrains_Mono } from "next/font/google";
-import { Providers } from "@/components/providers";
-import "./globals.css";
+"use client";
 
-// ─── Fonts ──────────────────────────────────────────────────────────
-const inter = Inter({
-  subsets:  ["latin"],
-  variable: "--font-inter",
-  display:  "swap",
-});
+import React from "react";
+import { Sidebar }      from "@/components/layout/sidebar";
+import { Topbar }       from "@/components/layout/topbar";
+import { MobileDrawer } from "@/components/layout/mobile-drawer";
+import { cn }           from "@/lib/utils";
 
-const jetbrainsMono = JetBrains_Mono({
-  subsets:  ["latin"],
-  variable: "--font-mono",
-  display:  "swap",
-  weight:   ["400", "500", "600"],
-});
+// Persist collapsed state in localStorage
+function useSidebarState() {
+  const [collapsed, setCollapsed] = React.useState(false);
+  const [mounted,   setMounted]   = React.useState(false);
 
-// ─── Metadata ───────────────────────────────────────────────────────
-export const metadata: Metadata = {
-  title: {
-    default:  "PulseWatch — Monitor Everything. Miss Nothing.",
-    template: "%s | PulseWatch",
-  },
-  description:
-    "Production-grade observability and monitoring platform for Windows servers. Real-time metrics, logs, and alerts — all in one place.",
-  keywords: [
-    "monitoring",
-    "observability",
-    "prometheus",
-    "grafana",
-    "dashboard",
-    "devops",
-    "windows server",
-    "metrics",
-    "alerts",
-    "logs",
-  ],
-  authors:  [{ name: "PulseWatch" }],
-  creator:  "PulseWatch",
-  metadataBase: new URL(
-    process.env["NEXT_PUBLIC_APP_URL"] ?? "http://localhost:3000"
-  ),
-  openGraph: {
-    type:        "website",
-    locale:      "en_US",
-    url:         "/",
-    title:       "PulseWatch — Monitor Everything. Miss Nothing.",
-    description: "Production-grade observability and monitoring platform for Windows servers.",
-    siteName:    "PulseWatch",
-  },
-  twitter: {
-    card:        "summary_large_image",
-    title:       "PulseWatch",
-    description: "Production-grade observability and monitoring platform.",
-  },
-  robots: {
-    index:             true,
-    follow:            true,
-    googleBot: {
-      index:            true,
-      follow:           true,
-      "max-video-preview": -1,
-      "max-image-preview": "large",
-      "max-snippet":     -1,
-    },
-  },
-};
+  React.useEffect(() => {
+    setMounted(true);
+    const stored = localStorage.getItem("pulsewatch-sidebar-collapsed");
+    if (stored !== null) setCollapsed(stored === "true");
+  }, []);
 
-export const viewport: Viewport = {
-  themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#f0f9ff" },
-    { media: "(prefers-color-scheme: dark)",  color: "#0f1117" },
-  ],
-  width:        "device-width",
-  initialScale: 1,
-};
+  const toggle = React.useCallback(() => {
+    setCollapsed((prev) => {
+      const next = !prev;
+      localStorage.setItem("pulsewatch-sidebar-collapsed", String(next));
+      return next;
+    });
+  }, []);
 
-// ─── Root Layout ────────────────────────────────────────────────────
-export default function RootLayout({
+  return { collapsed: mounted ? collapsed : false, toggle };
+}
+
+export default function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const { collapsed, toggle } = useSidebarState();
+  const [drawerOpen, setDrawerOpen] = React.useState(false);
+
   return (
-    <html
-      lang="en"
-      suppressHydrationWarning
-      className={`${inter.variable} ${jetbrainsMono.variable}`}
-    >
-      <body className="font-sans antialiased min-h-screen bg-background text-foreground">
-        <Providers>{children}</Providers>
-      </body>
-    </html>
+    <div className="flex h-screen overflow-hidden bg-background">
+
+      {/* ── Desktop Sidebar ──────────────────────────── */}
+      <Sidebar
+        collapsed={collapsed}
+        onToggle={toggle}
+        className="hidden md:flex flex-shrink-0"
+      />
+
+      {/* ── Mobile Drawer ────────────────────────────── */}
+      <MobileDrawer
+        open={drawerOpen}
+        onClose={() => setDrawerOpen(false)}
+      />
+
+      {/* ── Main Content Area ────────────────────────── */}
+      <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
+
+        {/* Top bar */}
+        <Topbar onMenuClick={() => setDrawerOpen(true)} />
+
+        {/* Page content */}
+        <main
+          className={cn(
+            "flex-1 overflow-y-auto overflow-x-hidden",
+            "bg-background"
+          )}
+        >
+          {/* Inner padding container */}
+          <div className="p-4 md:p-6 max-w-[1600px] mx-auto">
+            {children}
+          </div>
+        </main>
+
+        {/* ── Status Bar ──────────────────────────────── */}
+        <footer className="flex-shrink-0 h-6 flex items-center px-4 gap-4 border-t border-border bg-background/80">
+          <div className="flex items-center gap-1.5">
+            <div className="w-1.5 h-1.5 rounded-full bg-status-healthy" />
+            <span className="text-[10px] text-muted-foreground">Connected</span>
+          </div>
+          <div className="w-px h-3 bg-border" />
+          <span className="text-[10px] text-muted-foreground">
+            Prometheus · Loki · Alertmanager
+          </span>
+          <div className="ml-auto text-[10px] text-muted-foreground">
+            PulseWatch v1.0.0
+          </div>
+        </footer>
+      </div>
+    </div>
   );
 }
